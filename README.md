@@ -3,7 +3,7 @@
 Technical documentation for the Angel project:
 
 * # Architecture.pdf
-  [link text](Architecture.pdf) Architecture diagram of Angel components.
+  [Architecture diagram of Angel components.](Architecture.pdf) 
   
 * # datamodels.pdf
   Ontology / data models of the Angel project.
