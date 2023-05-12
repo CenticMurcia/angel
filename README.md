@@ -2,13 +2,13 @@
 
 Documentacion técnica para del pryecto Angel:
 
-* Architecture.pdf
+* # Architecture.pdf
   Diagrama de arquitectura de los componentes de Angel
   
-* datamodels.pdf
+* # datamodels.pdf
   Documento de descripción de la ontologia de Angel
   
-* docker-compose.yml
+* # docker-compose.yml
   Archivo para el despliegue del docker del proyecto y poder probarlo.
 
 
