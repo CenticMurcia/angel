@@ -1,0 +1,64 @@
+version: "3.5"
+services:
+  angel:
+    image: centicmurcia/angel:latest
+    hostname: angel
+    container_name: angel-wipos
+    ports:
+      - 5886:8086   # port influxdb source historical data for Angel Dashboard
+      - 4886:1883   # port mqtt broker
+      - 4887:8080   # port mqtt borker web socket access
+    networks:
+      - default
+    environment:      
+      - IMEC_HOST=0.0.0.0   # IMEC Wipos mqtt context broker
+      - IMEC_PORT=1883      # IMEC Wipos mqtt context port
+      - CONTEXT_HOST=orion  # orion context broker host
+      - CONTEXT_PORT=1026   # orion context broker port
+
+    volumes:
+      - influxdb-db:/var/lib/influxdb2
+  
+  # TEST ORION CONTEX BROKER 
+  orion:
+    image: fiware/orion:latest
+    hostname: orion
+    container_name: angel-fiware-orion
+    depends_on:
+      - mongo-db
+    networks:
+      - default
+    ports:
+      - "1026:1026" # localhost:1026
+    command: -dbhost mongo-db -logLevel DEBUG -noCache
+    healthcheck:
+      test: curl --fail -s http://orion:1026/version || exit 1
+      interval: 5s
+
+  mongo-db:
+    image: mongo:4.4
+    hostname: mongo-db
+    container_name: angel-db-mongo
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017" # localhost:27017
+    networks:
+      - default
+    volumes:
+      - mongo-db:/data
+    healthcheck:
+      test: |
+        host=`hostname --ip-address || echo '127.0.0.1'`; 
+        mongo --quiet $host/test --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)' && echo 0 || echo 1
+      interval: 5s
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.100.9.0/24
+
+volumes:
+  mongo-db: ~
+  influxdb-db:
